@@ -1,3 +1,3 @@
-module jlifts/aws-mfa
+module github.com/joshbrgs/aws-mfa
 
-go 1.17
+go 1.22.1

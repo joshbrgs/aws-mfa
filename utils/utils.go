@@ -3,10 +3,11 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"jlifts/aws-mfa/aws"
-	"jlifts/aws-mfa/color"
 	"os"
 	"os/exec"
+
+	"github.com/joshbrgs/aws-mfa/aws"
+	"github.com/joshbrgs/aws-mfa/color"
 )
 
 type CredentialsType struct {
@@ -35,7 +36,7 @@ func ConfigureSession(arn string, code string, verboseFL bool, defaultProfile st
 	// build aws mfa get session token by mfa command
 	result := aws.AWSSessionCommand(arn, code, verboseFL, defaultProfile)
 
-	//convert the result to the json structure for go
+	// convert the result to the json structure for go
 	var convertedResult AwsSession
 
 	decodeErr := json.Unmarshal([]byte(result), &convertedResult)
@@ -50,7 +51,7 @@ func ConfigureSession(arn string, code string, verboseFL bool, defaultProfile st
 	}
 
 	var varname string = "aws_access_key_id"
-	var value = convertedResult.Credentials.AccessKeyId
+	value := convertedResult.Credentials.AccessKeyId
 	aws.AWSSetCommand(varname, value, verboseFL, mfaProfile)
 
 	varname = "aws_secret_access_key"
@@ -82,14 +83,13 @@ func GetARN(defaultProfile string) (arn string) {
 		}
 
 		out, err := exec.Command(app, "iam", "list-mfa-devices", "--user-name", name, "--profile", defaultProfile, "--output", "json").CombinedOutput()
-
 		if err != nil {
 			fmt.Println(color.Red + string(out) + color.Reset)
 			fmt.Println("Do you have MFA set up in AWS?")
 			panic(err)
 		}
 
-		//convert the result to the json structure for go
+		// convert the result to the json structure for go
 		var result string = string(out)
 		var convertedMFA AwsMfaDevices
 

@@ -2,10 +2,11 @@ package aws
 
 import (
 	"fmt"
-	"jlifts/aws-mfa/color"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/joshbrgs/aws-mfa/color"
 )
 
 func AWSSetCommand(varname string, value string, verboseFl bool, mfaProfile string) {
@@ -23,7 +24,6 @@ func AWSSetCommand(varname string, value string, verboseFl bool, mfaProfile stri
 	}
 
 	out, err := exec.Command(app, configureCommand, setCommand, varname, value, arg1, arg1Val, arg2, arg2Val).CombinedOutput()
-
 	if err != nil {
 		fmt.Println(color.Red + string(out) + color.Reset)
 		panic(err)
@@ -52,7 +52,6 @@ func AWSSessionCommand(arn string, code string, verboseFl bool, defaultProfile s
 		fmt.Println(execExample)
 	}
 	out, err := exec.Command(app, command, command1, arg1, arg1Val, arg2, arg2Val, arg3, arg3Val, arg4, arg4Val).CombinedOutput()
-
 	if err != nil {
 		fmt.Println(color.Red + string(out) + color.Reset)
 		panic(err)
@@ -67,7 +66,6 @@ func CreateAwsMfaProfile(mfaProfile string) {
 	fmt.Printf("Creating %s profile...\n", mfaProfile)
 	profile := "profile." + mfaProfile + ".region"
 	out, err := exec.Command("aws", "configure", "set", profile, "us-east-1").CombinedOutput()
-
 	if err != nil {
 		fmt.Println(color.Red + string(out) + color.Reset)
 		panic(err)
@@ -75,7 +73,6 @@ func CreateAwsMfaProfile(mfaProfile string) {
 
 	profile = "profile." + mfaProfile + ".output"
 	out, err = exec.Command("aws", "configure", "set", profile, "json").CombinedOutput()
-
 	if err != nil {
 		fmt.Println(color.Red + string(out) + color.Reset)
 		panic(err)
@@ -88,12 +85,11 @@ func CreateAwsMfaProfile(mfaProfile string) {
 
 func MfaProfileCheck(mfaProfile string) bool {
 	out, err := exec.Command("aws", "configure", "list", "--profile", mfaProfile).CombinedOutput()
-
 	if err != nil {
 		fmt.Println("We will create a AWS CLI profile for your MFA Creds")
 	}
 
-	var profileCheck = string(out)
+	profileCheck := string(out)
 
 	if strings.Contains(profileCheck, "could not be found") {
 		CreateAwsMfaProfile(mfaProfile)
@@ -124,7 +120,6 @@ func KubeConfig(verboseFl bool, mfaProfile string) {
 		fmt.Println(app + " " + "eks" + " " + "update-kubeconfig" + " " + "--region" + " " + region + " " + "--name" + " " + cluster + " " + "--profile" + " " + mfaProfile)
 	}
 	out, err := exec.Command(app, "eks", "update-kubeconfig", "--region", region, "--name", cluster, "--profile", mfaProfile).CombinedOutput()
-
 	if err != nil {
 		fmt.Println(color.Red + string(out) + color.Reset)
 		panic(err)
@@ -138,7 +133,6 @@ func KubeConfig(verboseFl bool, mfaProfile string) {
 func CheckSessionExpiration(mfaProfile string) bool {
 	profile := "profile." + mfaProfile + ".expiration"
 	out, err := exec.Command("aws", "configure", "get", profile).CombinedOutput()
-
 	if err != nil {
 		fmt.Println("**Ignore if this is your first time**")
 		fmt.Println("Error in reading token expiration date")
@@ -148,7 +142,6 @@ func CheckSessionExpiration(mfaProfile string) bool {
 	expiresAt = strings.ReplaceAll(expiresAt, "\x0d\x0a", "")
 	var now time.Time = time.Now()
 	t, err := time.Parse(time.RFC3339, expiresAt)
-
 	if err != nil {
 		fmt.Println(color.Red + err.Error() + color.Reset)
 	}

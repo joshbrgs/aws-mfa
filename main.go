@@ -3,15 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
-	"jlifts/aws-mfa/aws"
-	"jlifts/aws-mfa/color"
-	"jlifts/aws-mfa/utils"
+
+	"github.com/joshbrgs/aws-mfa/aws"
+	"github.com/joshbrgs/aws-mfa/color"
+	"github.com/joshbrgs/aws-mfa/utils"
 )
 
 // Option for flag arguments : --verbose, --kubeConfig, --help
 func main() {
-
-	//Flags
+	// Flags
 	verboseFL := flag.Bool("verbose", false, "a bool that turns on output")
 	updateFL := flag.Bool("kubeConfig", false, "a bool to activate updating your local kube config with your session keys")
 	defaultProfileFL := flag.String("defaultProfile", "default", "declare the specific profile that holds your keys for your aws account, default value is --profile default")
